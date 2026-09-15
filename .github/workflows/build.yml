@@ -41,7 +41,7 @@ jobs:
       - name: Extract Terraform version from Dockerfile
         id: tf_version
         run: |
-          TF_VERSION=$(grep 'FROM hashicorp/terraform:' Dockerfile | head -1 | sed 's/FROM hashicorp\/terraform://;s/ AS terraform//')
+          TF_VERSION=$(grep '^FROM hashicorp/terraform:' Dockerfile | head -1 | sed 's/FROM hashicorp\/terraform://;s/ AS terraform//')
           echo "version=${TF_VERSION}" >> $GITHUB_OUTPUT
           echo "Terraform version: ${TF_VERSION}"
 

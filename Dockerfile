@@ -5,7 +5,7 @@
 # Architecture: linux/arm64 (Graviton runners, primary)
 #
 # Image: ghcr.io/christlau/terraform-aws-ci:<tf-version>
-# To update Terraform version: change FROM hashicorp/terraform:<version> and push.
+# To update Terraform version: bump the version tag below and push to main.
 
 FROM hashicorp/terraform:1.16.2 AS terraform
 
