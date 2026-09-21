@@ -27,22 +27,12 @@ COPY --from=terraform /bin/terraform /usr/local/bin/terraform
 
 # Pre-bake common Terraform providers so CI jobs skip the download step
 ENV TF_PLUGIN_CACHE_DIR=/opt/terraform-provider-cache
-RUN mkdir -p /opt/terraform-provider-cache /tmp/tf-prebake && \
-    cat > /tmp/tf-prebake/versions.tf << 'TFEOF'
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 6.0"
-    }
-    null = {
-      source  = "hashicorp/null"
-      version = "~> 3.0"
-    }
-  }
-}
-TFEOF
-    cd /tmp/tf-prebake && terraform init && rm -rf /tmp/tf-prebake
+
+RUN mkdir -p /opt/terraform-provider-cache /tmp/tf-prebake
+
+RUN printf 'terraform {\n  required_providers {\n    aws = {\n      source  = "hashicorp/aws"\n      version = "~> 6.0"\n    }\n    null = {\n      source  = "hashicorp/null"\n      version = "~> 3.0"\n    }\n  }\n}\n' > /tmp/tf-prebake/versions.tf
+
+RUN cd /tmp/tf-prebake && terraform init && rm -rf /tmp/tf-prebake
 
 RUN terraform version && aws --version && git --version && jq --version
 
