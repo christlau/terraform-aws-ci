@@ -1,5 +1,5 @@
 # Dockerfile — Terraform AWS CI Image
-# Base: amazonlinux:2023
+# Base: debian:bookworm-slim (more reliable under ARM64 QEMU cross-build)
 # Includes: AWS CLI v2 + Terraform + unzip + git + jq
 # Pre-baked providers: hashicorp/aws ~6.x, hashicorp/null ~3.x
 # Architecture: linux/arm64 (Graviton runners, primary)
@@ -9,11 +9,13 @@
 
 FROM hashicorp/terraform:1.16.2 AS terraform
 
-FROM amazonlinux:2023
+FROM debian:bookworm-slim
 
 ARG AWS_CLI_VERSION=2.27.16
 
-RUN yum install -y curl unzip git jq shadow-utils && yum clean all
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl unzip git jq ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN ARCH=$(uname -m) && \
     if [ "$ARCH" = "aarch64" ]; then AWS_ARCH="aarch64"; else AWS_ARCH="x86_64"; fi && \
